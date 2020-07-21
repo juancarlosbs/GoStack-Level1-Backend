@@ -1,8 +1,10 @@
 const express = require('express');
-const { uuid , isUUID} = require('uuidv4');
+const cors = require('cors');
+const { uuid , isUuid} = require('uuidv4');
 
 const app = express()
 
+app.use(cors())
 app.use (express.json())
 
 const projects = []
@@ -10,7 +12,7 @@ const projects = []
 function logRequest (req, res, next) {
     const { method, url } = req;
 
-    const logLabel = `[${method.toupperCase()} ${url}]`;
+    const logLabel = `[${method.toUpperCase()} ${url}]`;
     
     console.log(logLabel);
 
@@ -20,7 +22,7 @@ function logRequest (req, res, next) {
 function validateProjectId (req, res, next) {
     const { id } = req.params;
 
-    if ( !isUUID(id)) {
+    if (!isUuid(id)) {
         return res.status(400).json({ error: 'not a valid'})
     }
 
@@ -28,7 +30,7 @@ function validateProjectId (req, res, next) {
 }
 
 app.use(logRequest);
-app.use(validateProjectId)
+app.use('/projects/:id',validateProjectId);
 
 app.get('/projects', (req,res) => {
     const { title } = req.query;
